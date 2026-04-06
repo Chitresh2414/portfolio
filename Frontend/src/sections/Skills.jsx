@@ -20,15 +20,15 @@ const skills = [
 export default function Skills() {
   const containerRef = useRef(null);
 
-  useLayoutEffect(() => {
-    // Only run if the ref is connected
-    if (!containerRef.current) return;
+  // useLayoutEffect(() => {
+  //   // Only run if the ref is connected
+  //   if (!containerRef.current) return;
 
-    const ctx = skillsAnimation(containerRef.current);
+  //   const ctx = skillsAnimation(containerRef.current);
     
-    // Cleanup prevents memory leaks and double-triggering in React 18
-    return () => ctx.revert();
-  }, []);
+  //   // Cleanup prevents memory leaks and double-triggering in React 18
+  //   return () => ctx.revert();
+  // }, []);
 
   return (
     <section ref={containerRef} className="py-32 px-6 max-w-5xl mx-auto overflow-hidden">

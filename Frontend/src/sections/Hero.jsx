@@ -79,8 +79,8 @@ export default function Hero() {
         {/* CTA Buttons */}
         <div className="mt-10 flex gap-4 flex-wrap justify-center">
           <a
-            href="/resume.pdf"
-            download
+            href="/chitresh_resume.pdf"
+            download="chitresh_resume.pdf"
             className="btn-animate font-mono text-xs tracking-widest uppercase px-8 py-3.5 rounded-full border border-white/15 text-white/70 hover:border-amber-400/50 hover:text-amber-400 transition-all duration-300"
           >
             Resume

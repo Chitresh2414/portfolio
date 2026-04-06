@@ -33,7 +33,7 @@ export default function Navbar() {
         <Link to="/" className="group flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-amber-400 group-hover:scale-150 transition-transform duration-300" />
           <span className="font-['Syne'] text-xl font-bold tracking-tight">
-            Chitresh<span className="text-amber-400">.</span>
+            Chitresh-Sen<span className="text-amber-400">.</span>
           </span>
         </Link>
 
