@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
-// import { experienceAnimation } from "../animations/experienceAnimation";
+import gsap from "gsap";
+import {useGSAP} from"@gsap/react";
 
 const experiences = [
   {
@@ -19,10 +20,17 @@ const experiences = [
 export default function Experience() {
   const containerRef = useRef(null);
 
-//   useLayoutEffect(() => {
-//     const ctx = experienceAnimation(containerRef.current);
-//     return () => ctx.revert();
-//   }, []);
+// 
+useGSAP(()=>{
+    gsap.from(containerRef.current.querySelectorAll(".experience-item"), {
+    opacity: 0,
+    y: 50,
+    duration: 1,
+    stagger: 0.3,
+    ease: "power3.out",
+  });
+
+},{secop:containerRef});
 
   return (
     <section ref={containerRef} className="py-32 px-6  text-white">

@@ -8,8 +8,8 @@ export default function Home() {
   return (
     <main className="text-white">
       <Hero />
-      <Experience />
       <Skills />
+      <Experience />
       <ProjectList />
       <Footer />
     </main>
