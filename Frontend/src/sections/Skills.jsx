@@ -2,41 +2,55 @@ import { useLayoutEffect, useRef } from "react";
 import { skillsAnimation } from "../animations/skillsgsap";
 import { FaPython, FaReact, FaGitAlt } from "react-icons/fa";
 import {
-  SiFastapi, SiMongodb, SiDjango, SiFlask, SiMysql, SiJavascript,
+  SiFastapi,
+  SiMongodb,
+  SiDjango,
+  SiFlask,
+  SiMysql,
+  SiJavascript,
+  SiTailwindcss, // Added
+  SiNodedotjs,   // Added
+  SiGreensock,   // Changed SiGsap to SiGreensock (standard react-icon name)
 } from "react-icons/si";
 
 const skills = [
-  { name: "Python",     icon: <FaPython />,     tag: "core lang",    featured: true  },
-  { name: "React",      icon: <FaReact />,      tag: "frontend",     featured: false },
-  { name: "FastAPI",    icon: <SiFastapi />,    tag: "backend",      featured: false },
-  { name: "MongoDB",    icon: <SiMongodb />,    tag: "database",     featured: false },
-  { name: "Django",     icon: <SiDjango />,     tag: "framework",    featured: false },
-  { name: "Flask",      icon: <SiFlask />,      tag: "micro-fw",     featured: false },
-  { name: "JavaScript", icon: <SiJavascript />, tag: "web lang",     featured: false },
-  { name: "MySQL",      icon: <SiMysql />,      tag: "database",     featured: false },
-  { name: "Git",        icon: <FaGitAlt />,     tag: "version ctrl", featured: false },
+  { name: "Python", icon: <FaPython />, tag: "core lang", featured: true },
+  { name: "React", icon: <FaReact />, tag: "frontend", featured: false },
+  { name: "FastAPI", icon: <SiFastapi />, tag: "backend", featured: false },
+  { name: "MongoDB", icon: <SiMongodb />, tag: "database", featured: false },
+  { name: "Django", icon: <SiDjango />, tag: "framework", featured: false },
+  { name: "Flask", icon: <SiFlask />, tag: "micro-fw", featured: false },
+  { name: "JavaScript", icon: <SiJavascript />, tag: "web lang", featured: false },
+  { name: "MySQL", icon: <SiMysql />, tag: "database", featured: false },
+  { name: "Git", icon: <FaGitAlt />, tag: "version ctrl", featured: false },
+  { name: "Tailwind CSS", icon: <SiTailwindcss />, tag: "css framework", featured: false },
+  { name: "Node.js", icon: <SiNodedotjs />, tag: "backend", featured: false },
+  { name: "GSAP", icon: <SiGreensock />, tag: "animation lib", featured: false },
 ];
 
 export default function Skills() {
   const containerRef = useRef(null);
 
   // useLayoutEffect(() => {
-  //   // Only run if the ref is connected
   //   if (!containerRef.current) return;
-
   //   const ctx = skillsAnimation(containerRef.current);
-    
-  //   // Cleanup prevents memory leaks and double-triggering in React 18
   //   return () => ctx.revert();
   // }, []);
 
   return (
-    <section ref={containerRef} className="py-32 px-6 max-w-5xl mx-auto overflow-hidden">
+    <section
+      ref={containerRef}
+      className="py-32 px-6 max-w-5xl mx-auto overflow-hidden"
+    >
       {/* Section label */}
       <div className="flex items-center gap-4 mb-4 opacity-50">
-        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-amber-400">02</span>
+        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-amber-400">
+          02
+        </span>
         <div className="w-8 h-px bg-amber-400/30" />
-        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white">expertise</span>
+        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white">
+          expertise
+        </span>
       </div>
 
       {/* Header */}
@@ -71,7 +85,7 @@ export default function Skills() {
         {skills.slice(1).map((s, i) => (
           <div
             key={i}
-            className="skill flex flex-col gap-4 bg-white/3 border border-white/5 rounded-2xl p-5 cursor-pointer hover:bg-white/6 hover:border-white/20 transition-all duration-300 group"
+            className="skill flex flex-col gap-4 bg-white/5 border border-white/5 rounded-2xl p-5 cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-300 group"
           >
             <span className="text-2xl text-white/40 group-hover:text-amber-400 group-hover:scale-110 transition-all duration-500">
               {s.icon}
