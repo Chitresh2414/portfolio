@@ -1,19 +1,15 @@
-import React from 'react'
-import Hero from '../sections/Hero'
-import Footer from '../sections/Footer'
-import Skills from '../sections/Skills'
-import ProjectList from '../sections/projectList'
+import Hero from "../sections/Hero";
+import Skills from "../sections/Skills";
+import ProjectList from "../sections/projectList";
+import Footer from "../sections/Footer";
 
-
-const Home = () => {
+export default function Home() {
   return (
-    <div>
-        <Hero />
-        <Skills />
-        <ProjectList />
-        <Footer />
-    </div>
-  )
+    <main className="text-white">
+      <Hero />
+      <Skills />
+      <ProjectList />
+      <Footer />
+    </main>
+  );
 }
-
-export default Home

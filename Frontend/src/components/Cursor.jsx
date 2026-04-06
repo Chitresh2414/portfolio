@@ -14,7 +14,7 @@ export default function Cursor() {
   return (
     <>
       {/* 🔵 Trail */}
-      {[...Array(6)].map((_, i) => (
+      {[...Array(4)].map((_, i) => (
         <div
           key={i}
           ref={(el) => (trailRefs.current[i] = el)}
@@ -33,7 +33,7 @@ export default function Cursor() {
         ref={textRef}
         className="fixed top-0 left-0 text-xs text-white pointer-events-none z-9999 opacity-0 -translate-x-1/2 -translate-y-1/2"
       >
-        
+        {/* Text will be set dynamically via animation */}
       </div>
     </>
   );

@@ -42,7 +42,7 @@ export const cursorAnimation = (cursorRef, trailRefs, textRef) => {
   const elements = document.querySelectorAll("a, button, .cursor-hover");
 
   const onEnter = (e) => {
-    const label = e.target.getAttribute("data-cursor") || "VIEW";
+    const label = e.target.getAttribute("data-cursor") || {};
 
     gsap.to([cursor, ...trails], {
       scale: 2,
@@ -54,7 +54,7 @@ export const cursorAnimation = (cursorRef, trailRefs, textRef) => {
       duration: 0.2,
     });
 
-    text.innerText = label;
+    // text.innerText = label;
   };
 
   const onLeave = () => {
