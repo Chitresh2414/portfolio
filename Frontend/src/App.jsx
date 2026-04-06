@@ -1,11 +1,17 @@
-import React from 'react'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Cursor from "./components/Cursor";
 
-const App = () => {
+export default function App() {
   return (
-    <div>
-      
-    </div>
-  )
-}
+    <BrowserRouter>
+      <Cursor/>
+      <Navbar />
 
-export default App
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}

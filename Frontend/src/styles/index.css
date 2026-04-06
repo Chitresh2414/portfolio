@@ -1,90 +1,20 @@
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: system-ui, sans-serif;
+@import "tailwindcss";
+
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
 }
 
-/* App Background */
-.app {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-}
-
-/* Card */
-.card {
-  background: #111827;
-  padding: 2rem;
-  border-radius: 1rem;
-  width: 320px;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-}
-
-/* Title */
-.title {
-  color: #e5e7eb;
-  margin-bottom: 1rem;
-}
-
-/* Count */
-.count {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #f9fafb;
-  margin-bottom: 0.5rem;
-}
-
-/* Status */
-.status {
-  margin-bottom: 1rem;
-  font-weight: bold;
-}
-
-.low { color: #22c55e; }
-.medium { color: #f59e0b; }
-.high { color: #ef4444; }
-
-/* Buttons */
-.buttons {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
-
-button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 999px;
-  background: #7c3aed;
+body {
+  @apply bg-[#99a0b2] text-white;
+  font-family: 'Poppins', sans-serif;
+  background: #020617;
   color: white;
-  cursor: pointer;
-  transition: 0.2s;
+  cursor: none;
 }
 
-button:hover {
-  background: #6d28d9;
-  transform: translateY(-2px);
-}
-
-button:disabled {
-  background: #4b5563;
-  cursor: not-allowed;
-}
-
-/* Input */
-input {
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  border: none;
-  outline: none;
-  background: #1f2937;
-  color: white;
-  text-align: center;
+/* Glow effect */
+.glow {
+  text-shadow: 0 0 20px rgba(34, 211, 238, 0.7);
 }
