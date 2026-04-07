@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import React, { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -15,6 +15,8 @@ import {
   SiGreensock,
 } from "react-icons/si";
 
+gsap.registerPlugin(ScrollTrigger);
+
 const skills = [
   { name: "Python", icon: <FaPython />, tag: "core lang", featured: true },
   { name: "React", icon: <FaReact />, tag: "frontend", featured: false },
@@ -30,96 +32,150 @@ const skills = [
   { name: "GSAP", icon: <SiGreensock />, tag: "animation lib", featured: false },
 ];
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function Skills() {
   const containerRef = useRef(null);
 
   useGSAP(() => {
-    gsap.context(() => {
-      // Initial state for all elements
-      gsap.set([".skills-heading", ".skills-line", ".skill"], { opacity: 0, y: 40 });
+    // 1. Header & Label Intro
+    const introTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top 85%",
+        toggleActions: "play none none reverse",
+      }
+    });
 
-      // Animate header & line
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 85%",
-        },
-      })
-      .to(".skills-heading", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" })
-      .to(".skills-line", { opacity: 1, scaleX: 1, transformOrigin: "left center", duration: 1, ease: "power2.inOut" }, "-=0.6");
+    introTl
+      .from(".skills-label", { x: -30, opacity: 0, duration: 1, ease: "power4.out" })
+      .from(".skills-title", { 
+        y: 50, 
+        opacity: 0, 
+        rotateX: -20, 
+        duration: 1.2, 
+        ease: "power4.out" 
+      }, "-=0.8")
+      .from(".skills-line", { scaleX: 0, transformOrigin: "left", duration: 1.5, ease: "expo.inOut" }, "-=1");
 
-      // Animate each skill individually on scroll
-      gsap.utils.toArray(".skill").forEach((el, index) => {
-        gsap.fromTo(el,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "back.out(1.4)",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-            delay: index * 0.05 // small stagger for smooth effect
+    // 2. Cinematic Card Batching (The Working Animation)
+    ScrollTrigger.batch(".skill-card", {
+      start: "top 90%",
+      onEnter: (elements) => {
+        gsap.fromTo(elements, 
+          { 
+            opacity: 0, 
+            y: 50, 
+            scale: 0.9, 
+            filter: "blur(10px)", 
+            rotateX: -15 
+          }, 
+          { 
+            opacity: 1, 
+            y: 0, 
+            scale: 1, 
+            filter: "blur(0px)", 
+            rotateX: 0, 
+            stagger: 0.1, 
+            duration: 1.2, 
+            ease: "expo.out",
+            overwrite: true 
           }
         );
-      });
+      },
+      onLeaveBack: (elements) => {
+        gsap.set(elements, { opacity: 0, y: 50, scale: 0.9, filter: "blur(10px)" });
+      }
+    });
 
-      // Featured skill glowing effect
-      gsap.to(".skill.featured", {
-        borderColor: "rgba(251, 191, 36, 0.4)",
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-      });
+    // 3. Featured Glow & Parallax Background
+    gsap.to(".featured-glow", {
+      opacity: 0.5,
+      scale: 1.2,
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut"
+    });
 
-    }, containerRef);
-  });
+    gsap.to(".bg-orb", {
+      y: -150,
+      x: 50,
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top bottom",
+        end: "bottom top",
+        scrub: 1.5,
+      }
+    });
+
+  }, { scope: containerRef });
 
   return (
-    <section ref={containerRef} className="py-32 px-6 max-w-5xl mx-auto overflow-hidden">
-      {/* Section label */}
-      <div className="flex items-center gap-4 mb-4 opacity-50">
-        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-amber-400">02</span>
-        <div className="w-8 h-px bg-amber-400/30" />
-        <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white">expertise</span>
-      </div>
+    <section ref={containerRef} className="relative py-32 px-6 bg-[#050505] overflow-hidden">
+      
+      {/* Background Parallax Lighting */}
+      <div className="bg-orb absolute top-1/4 left-1/4 w-[50vw] h-[50vw] bg-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="bg-orb absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-blue-600/5 blur-[120px] rounded-full pointer-events-none" />
 
-      {/* Header */}
-      <div className="flex items-baseline gap-6 mb-12">
-        <h2 className="skills-heading font-['Syne'] text-4xl md:text-5xl font-bold tracking-tight shrink-0 text-white">
-          Skills
-        </h2>
-        <div className="skills-line flex-1 h-px bg-white/10" />
-        <span className="font-mono text-xs text-white/20 tracking-widest shrink-0">{skills.length} tools</span>
-      </div>
-
-      {/* Skills Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        {/* Featured skill */}
-        <div className="skill featured col-span-2 flex flex-row items-center gap-5 bg-white/5 border border-white/10 rounded-2xl p-6 cursor-pointer group relative overflow-hidden">
-          <span className="text-4xl text-amber-400 group-hover:scale-110 transition-transform duration-500">{skills[0].icon}</span>
-          <div className="flex flex-col gap-1">
-            <p className="font-mono text-sm font-medium tracking-widest uppercase text-white">{skills[0].name}</p>
-            <span className="font-mono text-[10px] tracking-wide text-amber-400/60 border border-amber-400/20 rounded-full px-3 py-0.5 w-fit bg-amber-400/5">{skills[0].tag}</span>
-          </div>
+      <div className="max-w-6xl mx-auto relative z-10">
+        
+        {/* Section Label */}
+        <div className="skills-label flex items-center gap-4 mb-10">
+          <span className="font-mono text-[10px] tracking-[0.6em] uppercase text-amber-500 font-bold">02 / EXPERTISE</span>
+          <div className="skills-line h-px w-24 bg-white/10" />
         </div>
 
-        {/* Remaining skills */}
-        {skills.slice(1).map((s, i) => (
-          <div key={i} className="skill flex flex-col gap-4 bg-white/5 border border-white/5 rounded-2xl p-5 cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
-            <span className="text-2xl text-white/40 group-hover:text-amber-400 group-hover:scale-110 transition-all duration-500">{s.icon}</span>
-            <div className="flex flex-col gap-2">
-              <p className="font-mono text-[11px] font-medium tracking-widest uppercase text-white/70">{s.name}</p>
-              <span className="font-mono text-[9px] tracking-wide text-white/20 border border-white/10 rounded-full px-2 py-0.5 w-fit">{s.tag}</span>
+        {/* Cinematic Header */}
+        <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
+          <h2 className="skills-title text-6xl md:text-8xl font-light tracking-tighter text-white leading-none">
+            Tech <br /> <span className="italic font-serif text-amber-500">Arsenal.</span>
+          </h2>
+          <p className="skills-reveal max-w-xs text-white/30 font-mono text-[10px] uppercase tracking-[0.3em] leading-loose">
+            Building robust solutions with a modern full-stack ecosystem.
+          </p>
+        </div>
+
+        {/* Skills Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 perspective-1000">
+          {skills.map((skill, i) => (
+            <div 
+              key={i} 
+              className={`skill-card group relative p-8 rounded-4xl border transition-all duration-700 
+                ${skill.featured 
+                  ? "col-span-2 md:col-span-2 bg-amber-500/3 border-amber-500/20 shadow-[0_0_40px_rgba(245,158,11,0.05)]" 
+                  : "bg-white/2 border-white/5 hover:bg-white/6 hover:border-white/20"
+                }`}
+            >
+              {/* Featured Ambient Glow */}
+              {skill.featured && (
+                <div className="featured-glow absolute inset-0 bg-amber-500/10 blur-2xl opacity-20 pointer-events-none rounded-full" />
+              )}
+
+              <div className="relative z-10 h-full flex flex-col justify-between gap-12">
+                <div className={`text-4xl transition-all duration-500 group-hover:scale-110 group-hover:-rotate-12
+                  ${skill.featured ? "text-amber-500" : "text-white/30 group-hover:text-white"}
+                `}>
+                  {skill.icon}
+                </div>
+
+                <div>
+                  <h3 className="text-white font-medium text-base tracking-tight mb-1 group-hover:text-amber-400 transition-colors">
+                    {skill.name}
+                  </h3>
+                  <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-white/20 group-hover:text-white/50">
+                    {skill.tag}
+                  </span>
+                </div>
+              </div>
+
+              {/* Unique Interactive Hover Border */}
+              <div className="absolute inset-0 border border-amber-500/0 group-hover:border-amber-500/30 rounded-4xl transition-all duration-1000 pointer-events-none scale-110 group-hover:scale-100 opacity-0 group-hover:opacity-100" />
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
+
+      {/* Subtle Grain Overlay */}
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
     </section>
   );
 }

@@ -1,40 +1,106 @@
 import { useEffect, useRef } from "react";
-import { cursorAnimation } from "../animations/cursorAnimations";
+import gsap from "gsap";
 
 export default function CustomCursor() {
   const cursorRef = useRef(null);
-  const textRef = useRef(null);
-  const trailRefs = useRef([]);
+  const followerRef = useRef(null);
+  const labelRef = useRef(null);
 
   useEffect(() => {
-    const cleanup = cursorAnimation(cursorRef, trailRefs, textRef);
-    return () => cleanup && cleanup();
+    const cursor = cursorRef.current;
+    const follower = followerRef.current;
+    const label = labelRef.current;
+
+    // 1. Smooth Follow Logic
+    const moveCursor = (e) => {
+      const { clientX: x, clientY: y } = e;
+
+      // Main dot (Instant follow)
+      gsap.to(cursor, {
+        x: x,
+        y: y,
+        duration: 0.1,
+        ease: "power2.out"
+      });
+
+      // Follower ring (Slight delay/lag for cinematic feel)
+      gsap.to(follower, {
+        x: x,
+        y: y,
+        duration: 0.5,
+        ease: "power3.out"
+      });
+
+      // Label (Parallax follow)
+      gsap.to(label, {
+        x: x,
+        y: y,
+        duration: 0.7,
+        ease: "power4.out"
+      });
+    };
+
+    // 2. Interaction Logic (Hovering over links/buttons)
+    const handleHover = (e) => {
+      const isHoverable = e.target.closest("a, button, .project-card, .skill-card");
+      const isProject = e.target.closest(".project-card");
+
+      if (isHoverable) {
+        gsap.to(cursor, { scale: 0, duration: 0.3 });
+        gsap.to(follower, { 
+          scale: 2.5, 
+          backgroundColor: "rgba(245, 158, 11, 0.1)", // Amber-500/10
+          borderColor: "rgba(245, 158, 11, 0.5)",
+          duration: 0.3 
+        });
+        
+        if (isProject) {
+          gsap.to(label, { opacity: 1, scale: 1, duration: 0.3 });
+        }
+      } else {
+        gsap.to(cursor, { scale: 1, duration: 0.3 });
+        gsap.to(follower, { 
+          scale: 1, 
+          backgroundColor: "transparent", 
+          borderColor: "rgba(255, 255, 255, 0.2)",
+          duration: 0.3 
+        });
+        gsap.to(label, { opacity: 0, scale: 0, duration: 0.3 });
+      }
+    };
+
+    window.addEventListener("mousemove", moveCursor);
+    window.addEventListener("mouseover", handleHover);
+
+    return () => {
+      window.removeEventListener("mousemove", moveCursor);
+      window.removeEventListener("mouseover", handleHover);
+    };
   }, []);
 
   return (
-    <div className="hidden md:block"> {/* Hide on mobile to prevent bugs */}
-      {/* Main Dot */}
+    <div className="hidden md:block fixed inset-0 pointer-events-none z-9999">
+      {/* 1. Main Precision Dot */}
       <div
         ref={cursorRef}
-        className="fixed top-0 left-0 w-3 h-3 bg-amber-400 rounded-full pointer-events-none z-9999 mix-blend-difference"
+        className="fixed top-0 left-0 w-1.5 h-1.5 bg-amber-500 rounded-full -translate-x-1/2 -translate-y-1/2 mix-blend-difference"
       />
 
-      {/* Trail Rings */}
-      {[...Array(2)].map((_, i) => (
-        <div
-          key={i}
-          ref={(el) => (trailRefs.current[i] = el)}
-          className="fixed top-0 left-0 w-8 h-8 border border-amber-400/20 rounded-full pointer-events-none z-9998"
-        />
-      ))}
-
-      {/* Floating Text / SVG */}
+      {/* 2. Cinematic Follower Ring */}
       <div
-        ref={textRef}
-        className="fixed top-0 left-0 pointer-events-none z-9999 flex items-center justify-center opacity-0 scale-0"
+        ref={followerRef}
+        className="fixed top-0 left-0 w-10 h-10 border border-white/20 rounded-full -translate-x-1/2 -translate-y-1/2 transition-colors duration-500"
+      />
+
+      {/* 3. Contextual Label (e.g., "VIEW") */}
+      <div
+        ref={labelRef}
+        className="fixed top-0 left-0 opacity-0 scale-0 -translate-x-1/2 -translate-y-[120%] pointer-events-none"
       >
-        <div className="w-20 h-20 flex items-center justify-center relative">
-           <span className="text-amber-400 text-[10px] font-mono tracking-widest uppercase bg-black/80 px-2 py-1 rounded">View</span>
+        <div className="px-3 py-1 bg-amber-500 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.4)]">
+          <span className="text-[9px] font-mono font-bold tracking-[0.2em] text-black uppercase">
+            View Project
+          </span>
         </div>
       </div>
     </div>

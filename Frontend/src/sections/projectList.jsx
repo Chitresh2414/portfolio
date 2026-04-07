@@ -1,129 +1,127 @@
 import { useEffect, useState, useRef } from "react";
-import { projectAnimation } from "../animations/gsapAnimations";
-import { FiExternalLink, FiGithub } from "react-icons/fi";
+import { Link } from "react-router-dom"; // Add Link for navigation
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { FiExternalLink, FiGithub, FiArrowUpRight } from "react-icons/fi";
 
-export default function ProjectList() {
+gsap.registerPlugin(ScrollTrigger);
+
+export default function ProjectList({ isHomePage = false }) {
   const [projects, setProjects] = useState([]);
-  const cardsRef = useRef([]);
+  const containerRef = useRef(null);
 
-  // Fetch GitHub repos dynamically
   useEffect(() => {
     fetch("https://api.github.com/users/Chitresh2414/repos")
       .then((res) => res.json())
       .then((data) => {
-        // Sort by most recently updated
-        const sorted = data.sort(
-          (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
-        );
-        // Map to the format we need
-        const mapped = sorted.map((repo, index) => ({
-          title: repo.name,
-          desc: repo.description || "No description available",
-          tags: ["GitHub", "Code"], // you can customize or fetch languages
+        const sorted = data
+          .filter(repo => !repo.fork)
+          .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+
+        // Logic: If on home page, show 3. If not, show all.
+        const limit = isHomePage ? 3 : sorted.length;
+
+        const mapped = sorted.slice(0, limit).map((repo, index) => ({
+          title: repo.name.replace(/-/g, " "),
+          desc: repo.description || "Architecting digital solutions with precision and modern tech stacks.",
+          tags: [repo.language || "Full Stack", "Dev"],
           href: repo.html_url,
+          live: repo.homepage || repo.html_url,
           num: String(index + 1).padStart(2, "0"),
         }));
         setProjects(mapped);
       })
       .catch((err) => console.error("GitHub fetch error:", err));
-  }, []);
+  }, [isHomePage]);
 
-  // GSAP animation
-  useEffect(() => {
-    if (cardsRef.current.length) {
-      projectAnimation(cardsRef.current);
+  useGSAP(() => {
+    if (projects.length > 0) {
+      // Header Animation
+      gsap.from(".project-reveal", {
+        y: 30,
+        opacity: 0,
+        stagger: 0.2,
+        duration: 1,
+        ease: "power4.out",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 80%",
+        }
+      });
+
+      // Cards Batch Reveal
+      ScrollTrigger.batch(".project-card", {
+        start: "top 85%",
+        onEnter: (elements) => {
+          gsap.fromTo(elements, 
+            { opacity: 0, y: 40, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1, stagger: 0.1, duration: 1, ease: "expo.out", overwrite: true }
+          );
+        }
+      });
     }
   }, [projects]);
 
-  if (!projects.length) {
-    return (
-      <section className="py-32 px-6 max-w-5xl mx-auto text-center text-white/50">
-        Loading projects...
-      </section>
-    );
-  }
+  if (!projects.length) return <div className="h-40 flex items-center justify-center text-white/20">Loading...</div>;
 
   return (
-    <section className="py-32 px-6 max-w-5xl mx-auto">
-      {/* Section Label */}
-      <div className="flex items-center gap-4 mb-4">
-        <span className="font-['DM_Mono'] text-[10px] tracking-[0.3em] uppercase text-amber-400/60">
-          04
-        </span>
-        <div className="w-8 h-px bg-amber-400/30" />
-        <span className="font-['DM_Mono'] text-[10px] tracking-[0.3em] uppercase text-white/30">
-          work
-        </span>
+    <section ref={containerRef} className="py-32 px-6 max-w-6xl mx-auto relative overflow-hidden">
+      
+      {/* Background Glow */}
+      <div className="absolute top-1/2 left-0 w-72 h-72 bg-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
+
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-20">
+        <div>
+          <div className="project-reveal flex items-center gap-4 mb-6">
+            <span className="font-mono text-[10px] tracking-[0.5em] uppercase text-amber-500 font-bold">
+              {isHomePage ? "04 / Featured" : "Archive / All Works"}
+            </span>
+            <div className="h-px w-12 bg-white/10" />
+          </div>
+          <h2 className="project-reveal text-5xl md:text-7xl font-light tracking-tighter text-white leading-none">
+            Selected <span className="italic font-serif text-amber-500">Works.</span>
+          </h2>
+        </div>
+
+        {/* --- VIEW ALL BUTTON (Only shows on Home Page) --- */}
+        {isHomePage && (
+          <Link 
+            to="/projects" 
+            className="project-reveal group flex items-center gap-3 text-[10px] font-mono tracking-[0.3em] uppercase text-white/40 hover:text-amber-500 transition-all duration-500"
+          >
+            Explore Full Archive
+            <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-amber-500 group-hover:rotate-45 transition-all duration-500">
+               <FiArrowUpRight size={14} />
+            </div>
+          </Link>
+        )}
       </div>
 
-      {/* Header */}
-      <div className="flex items-baseline gap-6 mb-12">
-        <h2 className="font-['Syne'] text-4xl md:text-5xl font-bold tracking-tight shrink-0">
-          Projects
-        </h2>
-        <div className="flex-1 h-px bg-white/5" />
-        <span className="font-['DM_Mono'] text-xs text-white/20 tracking-widest shrink-0">
-          {String(projects.length).padStart(2, "0")} total
-        </span>
-      </div>
-
-      {/* Project Cards */}
-      <div className="grid md:grid-cols-3 gap-4">
+      {/* Grid */}
+      <div className="grid md:grid-cols-3 gap-6">
         {projects.map((p, i) => (
           <div
             key={i}
-            ref={(el) => (cardsRef.current[i] = el)}
-            className="card group relative flex flex-col justify-between bg-white/3 border border-white/8 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:bg-white/5 hover:border-white/15 hover:-translate-y-1 overflow-hidden"
+            className="project-card group relative flex flex-col justify-between bg-white/2 border border-white/5 rounded-4xl p-8 hover:bg-white/5 hover:border-amber-500/20 transition-all duration-700"
           >
-            {/* Hover Glow */}
-            <div className="absolute inset-0 bg-linear-to-br from-amber-400/4 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
-
             <div className="relative z-10">
-              {/* Number */}
-              <span className="font-['DM_Mono'] text-[10px] tracking-widest text-amber-400/40 mb-4 block">
-                {p.num}
-              </span>
-
-              {/* Title */}
-              <h3 className="font-['Syne'] text-xl font-bold text-white/90 mb-3 group-hover:text-white transition-colors duration-300">
-                {p.title}
-              </h3>
-
-              {/* Description */}
-              <p className="text-white/35 text-sm leading-relaxed mb-5">{p.desc}</p>
-
-              {/* Tags */}
-              <div className="flex flex-wrap gap-2 mb-6">
-                {p.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="font-['DM_Mono'] text-[10px] tracking-wide text-white/30 border border-white/8 rounded-full px-2.5 py-0.5"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+              <span className="font-mono text-[10px] tracking-[0.3em] text-white/20 mb-6 block uppercase">{p.num}</span>
+              <h3 className="text-2xl font-light tracking-tight text-white mb-4 group-hover:text-amber-400 transition-colors duration-500 capitalize">{p.title}</h3>
+              <p className="text-white/40 text-sm leading-relaxed mb-10 font-light italic h-20 overflow-hidden line-clamp-3">"{p.desc}"</p>
             </div>
 
-            {/* Links */}
-            <div className="relative z-10 flex items-center gap-4 pt-4 border-t border-white/5">
-              <a
-                href={p.href}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-1.5 font-['DM_Mono'] text-[10px] tracking-widest uppercase text-white/30 hover:text-amber-400 transition-colors duration-300"
-              >
-                <FiGithub size={12} /> Code
-              </a>
-
-              <a
-                href={p.href}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-1.5 font-['DM_Mono'] text-[10px] tracking-widest uppercase text-white/30 hover:text-amber-400 transition-colors duration-300"
-              >
-                <FiExternalLink size={12} /> Live
-              </a>
+            <div className="relative z-10 flex items-center justify-between pt-6 border-t border-white/5">
+              <div className="flex gap-4">
+                <a href={p.href} target="_blank" rel="noreferrer" className="text-white/30 hover:text-white transition-colors"><FiGithub size={16} /></a>
+                <a href={p.live} target="_blank" rel="noreferrer" className="text-white/30 hover:text-white transition-colors"><FiExternalLink size={16} /></a>
+              </div>
+              <div className="flex gap-2">
+                {p.tags.slice(0, 1).map(tag => (
+                  <span key={tag} className="text-[9px] font-mono text-amber-500/40 uppercase tracking-widest">{tag}</span>
+                ))}
+              </div>
             </div>
           </div>
         ))}
