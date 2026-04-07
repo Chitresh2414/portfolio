@@ -48,7 +48,7 @@ export default function ProjectList() {
       {/* Section Label */}
       <div className="flex items-center gap-4 mb-4">
         <span className="font-['DM_Mono'] text-[10px] tracking-[0.3em] uppercase text-amber-400/60">
-          03
+          04
         </span>
         <div className="w-8 h-px bg-amber-400/30" />
         <span className="font-['DM_Mono'] text-[10px] tracking-[0.3em] uppercase text-white/30">

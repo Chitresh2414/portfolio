@@ -4,13 +4,13 @@ import {useGSAP} from"@gsap/react";
 
 const experiences = [
   {
-    year: "2026 - Present",
+    year: "2026 march - Present",
     role: "Python Developer - Intern",
     company: "PAPASIDDHI IT SERVICES PVT LTD",
     desc: "Architecting robust backend services using Python frameworks like FastAPI and Django. Implemented RESTful APIs, optimized database interactions, and integrated third-party services to enhance application functionality and performance.",
   },
   {
-    year: "2025 - 2026",
+    year: "2025 August - 2026 February",
     role: "Full Stack Developer - Intern",
     company: "Cravite Technologies India Pvt Ltd",
     desc: "Engineered high-performance user interfaces by integrating advanced GSAP animations and React. Focused on optimizing frontend rendering cycles and asset delivery, resulting in a significantly smoother user experience and improved Core Web Vitals.",
