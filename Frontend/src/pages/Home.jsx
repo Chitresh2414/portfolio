@@ -1,6 +1,6 @@
 import Hero from "../sections/Hero";
 import Skills from "../sections/Skills";
-import ProjectList from "../sections/ProjectList"; // Capital 'P' for consistency
+import ProjectList from "../sections/projectList";
 import Footer from "../sections/Footer";
 import Experience from "../sections/Experience";
 
